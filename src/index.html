@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <title>Image search</title>
+  </head>
+  <body>
+        <div class="search-wrap">
+            <form class="search-form" id="search-form">
+              <input
+                type="text"
+                name="searchQuery"
+                autocomplete="off"
+                placeholder="Search images..."
+                class="input-field"
+              />
+              <button type="submit" class="btn">
+                <img src="./img/icons8-search.svg" alt="search" class="img" />
+              </button>
+          </form>
+        </div>
+        <div class="container">
+            <div class="gallery">
+          <!-- Картки зображень -->
+        </div>
+        </div>
+    <script src="./index.js" type="module"></script>
+  </body>
 </html>
