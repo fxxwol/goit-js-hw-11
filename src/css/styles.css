@@ -18,11 +18,15 @@ body {
   width: 1500px;
   padding-left: 15px;
   padding-right: 15px;
-  margin: 30px auto;
+  margin: 120px auto 30px;
 }
 
 .search-wrap {
+  position: fixed;
+  top:0;
+  right:0;
   height: 80px;
+  width: 100%;
   background-color: rgb(37, 51, 155);
   padding: 13px;
 }
