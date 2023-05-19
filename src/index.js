@@ -74,7 +74,6 @@ const handleIntersection = (entries, observer) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting && !isLoading) {
       loadMoreImages();
-      console.log(entry)
     }
   });
 };
