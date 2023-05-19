@@ -1,5 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchImg } from './fetchImg';
+import makeGalleryMarkup from './drawInterface'
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 const throttle = require('lodash.throttle');
@@ -18,35 +19,6 @@ let lightBox;
 
 refs.form.addEventListener('submit', onSubmit);
 refs.input.addEventListener('input', throttle(clearPage, 200))
-
-const createCardMarkup = ({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
-  return `<div class="photo-card">
-   <a class="gallery__link" href="${largeImageURL}">
-      <img loading="lazy" src="${webformatURL}" alt="${tags}" loading="lazy" class="card-img"/>
-   </a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b>
-      ${likes}
-    </p>
-    <p class="info-item">
-      <b>Views</b>
-      ${views}
-    </p>
-    <p class="info-item">
-      <b>Comments</b>
-      ${comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>
-      ${downloads}
-    </p>
-  </div>
-</div>`;
-};
-
-
-const makeGalleryMarkup = (arr) => arr.map(createCardMarkup).join('');
 
 async function loadMoreImages() {
   isLoading = true;
