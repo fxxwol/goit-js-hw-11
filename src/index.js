@@ -1,5 +1,8 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchImg } from './fetchImg';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+const throttle = require('lodash.throttle');
 
 const refs = {
   input: document.querySelector('.input-field'),
@@ -7,15 +10,20 @@ const refs = {
   gallery: document.querySelector('.gallery'),
 };
 
+let totalPages = 0;
 let currentPage = 1;
 let isLoading = false;
 let query = '';
+let lightBox;
 
 refs.form.addEventListener('submit', onSubmit);
+refs.input.addEventListener('input', throttle(clearPage, 200))
 
-const createCardMarkup = ({ webformatURL, tags, likes, views, comments, downloads }) => {
+const createCardMarkup = ({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
   return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" class="card-img"/>
+   <a class="gallery__link" href="${largeImageURL}">
+      <img loading="lazy" src="${webformatURL}" alt="${tags}" loading="lazy" class="card-img"/>
+   </a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -37,17 +45,25 @@ const createCardMarkup = ({ webformatURL, tags, likes, views, comments, download
 </div>`;
 };
 
+
 const makeGalleryMarkup = (arr) => arr.map(createCardMarkup).join('');
 
 async function loadMoreImages() {
   isLoading = true;
   currentPage++;
-
+  if (currentPage >= totalPages) {
+    observer.unobserve(refs.gallery.lastElementChild);
+    return;
+  }
   try {
-    const data = await fetchImg(query, currentPage);
+    const data = await fetchImg(query, currentPage)
+
     refs.gallery.insertAdjacentHTML('beforeend', makeGalleryMarkup(data.hits));
-     observer.observe(refs.gallery.lastElementChild);
-  } catch (error) {
+    lightBox.refresh();
+    observer.observe(refs.gallery.lastElementChild);
+
+  }
+  catch (error) {
     console.error(error);
   } finally {
     isLoading = false;
@@ -76,18 +92,25 @@ function onSubmit(e) {
   query = refs.input.value.trim();
   currentPage = 1;
 
-  fetchImg(query)
-    .then((data) => {
-      if (!data.total) {
-        Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-      }
-      refs.gallery.innerHTML = makeGalleryMarkup(data.hits);
-      if (refs.gallery.lastElementChild) {
-        observer.observe(refs.gallery.lastElementChild);
-      }
-    })
-    .catch((e) => {
-      Notify.failure("Error happened :(");
-      console.log(e.message);
-    });
+    fetchImg(query)
+      .then((data) => {
+        totalPages = Math.ceil(data.totalHits / 20);
+        if (!data.total) {
+          Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+        } else { Notify.success(`Hooray! We found ${data.totalHits} images.`) }
+        refs.gallery.innerHTML = makeGalleryMarkup(data.hits);
+        lightBox = new SimpleLightbox('.gallery a');
+        if (refs.gallery.lastElementChild) {
+          observer.observe(refs.gallery.lastElementChild);
+        }
+      })
+      .catch((e) => {
+        Notify.failure("Error happened :(");
+        console.log(e.message);
+      });
+}
+function clearPage() {
+  if (refs.input.value) {
+    refs.gallery.innerHTML = ''
+  }
 }
