@@ -21,7 +21,7 @@ refs.form.addEventListener('submit', onSubmit);
 async function loadMoreImages() {
   isLoading = true;
   currentPage++;
-  if (currentPage >= totalPages) {
+  if (currentPage === totalPages) {
     Notify.info("We're sorry, but you've reached the end of search results.")
     observer.unobserve(refs.gallery.lastElementChild);
     return;
@@ -78,12 +78,12 @@ async function onSubmit(e) {
 
     refs.gallery.innerHTML = makeGalleryMarkup(data.hits);
     lightBox = new SimpleLightbox('.gallery a');
-    observer.observe(refs.gallery.lastElementChild);
-    
+    if (refs.gallery.lastElementChild) { observer.observe(refs.gallery.lastElementChild); }
+
 
   } catch (error) {
     Notify.failure("Error happened :(");
-     console.log(error.message);
+    console.log(error.message);
   }
 
 }
